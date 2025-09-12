@@ -1,0 +1,55 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+// Prisma schema for buyer lead intake app with two models:
+// 1. buyers - id, fullName, email, phone, city, propertyType, bhk, purpose, budgetMin, budgetMax, timeline, source, status, notes, tags, ownerId, updatedAt
+// 2. buyer_history - id, buyerId, changedBy, changedAt, diff (JSON)
+
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+datasource db {
+  provider = "postgresql" // or "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Buyer {
+  id          String   @id @default(uuid())
+  fullName    String
+  email       String?  
+  phone       String
+  city        String
+  propertyType String
+  bhk         String?
+  purpose     String
+  budgetMin   Int?
+  budgetMax   Int?
+  timeline    String
+  source      String
+  status      String   @default("New")
+  notes       String?  
+  tags        String[]
+  ownerId     String
+  updatedAt   DateTime @updatedAt
+}
+
+model BuyerHistory {
+  id        String   @id @default(uuid())
+  buyerId   String
+  changedBy String
+  changedAt DateTime @default(now())
+  diff      Json
+}
