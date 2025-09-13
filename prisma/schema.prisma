@@ -10,46 +10,97 @@
 
 generator client {
   provider = "prisma-client-js"
-  output   = "../src/generated/prisma"
 }
 
-datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
-}
 datasource db {
   provider = "postgresql" // or "sqlite"
   url      = env("DATABASE_URL")
 }
 
-generator client {
-  provider = "prisma-client-js"
-}
-
 model Buyer {
-  id          String   @id @default(uuid())
-  fullName    String
-  email       String?  
-  phone       String
-  city        String
-  propertyType String
-  bhk         String?
-  purpose     String
-  budgetMin   Int?
-  budgetMax   Int?
-  timeline    String
-  source      String
-  status      String   @default("New")
-  notes       String?  
-  tags        String[]
-  ownerId     String
-  updatedAt   DateTime @updatedAt
+  id            String        @id @default(uuid())
+  fullName      String        @db.VarChar(80)
+  email         String?       @unique
+  phone         String        @db.VarChar(15)
+  city          City
+  propertyType  PropertyType
+  bhk           BHK?
+  purpose       Purpose
+  budgetMin     Int?
+  budgetMax     Int?
+  timeline      Timeline
+  source        Source
+  status        Status      @default(New)
+  notes         String?     @db.Text
+  tags          String[]
+  ownerId       String
+  updatedAt     DateTime    @updatedAt
+  histories     BuyerHistory[]
+  
+  @@index([ownerId])
 }
 
 model BuyerHistory {
-  id        String   @id @default(uuid())
-  buyerId   String
-  changedBy String
-  changedAt DateTime @default(now())
-  diff      Json
+  id         String    @id @default(uuid())
+  buyerId    String
+  changedBy  String
+  changedAt  DateTime  @default(now())
+  diff       Json
+  buyer      Buyer     @relation(fields: [buyerId], references: [id], onDelete: Cascade)
+
+  @@index([buyerId])
+}
+
+enum City {
+  Chandigarh
+  Mohali
+  Zirakpur
+  Panchkula
+  Other
+}
+
+enum PropertyType {
+  Apartment
+  Villa
+  Plot
+  Office
+  Retail
+}
+
+enum BHK {
+  "1"
+  "2"
+  "3"
+  "4"
+  Studio
+}
+
+enum Purpose {
+  Buy
+  Rent
+}
+
+enum Timeline {
+  "0-3m"
+  "3-6m"
+  ">6m"
+  Exploring
+}
+
+enum Source {
+  Website
+  Referral
+  Walkin
+  Call
+  Other
+}
+
+enum Status {
+  New
+  Qualified
+  Contacted
+  Visited
+  Negotiation
+  Converted
+  Dropped
 }
