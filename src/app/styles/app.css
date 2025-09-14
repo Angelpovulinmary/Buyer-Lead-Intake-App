@@ -1,0 +1,39 @@
+@import "tailwindcss";
+@import url("https://fonts.googleapis.com/css2?family=Figtree:wght@100;200;300;400;500;600;700;800;900&display=swap");
+body {
+  font-family: "Figtree", sans-serif;
+  background-color: #e5ece1ff;
+  scroll-behavior: smooth;
+  contain: layout paint;
+  content-visibility: auto;
+}
+@layer components {
+  section {
+    @apply flex items-center justify-center;
+  }
+
+  .buyers-form {
+    @apply flex flex-col gap-6 py-6 bg-white border border-light-200 rounded-xl shadow-100;
+    div {
+      @apply w-full flex flex-col gap-2.5 px-6 relative;
+    }
+    label {
+      @apply text-sm font-normal text-gray-100;
+    }
+  }
+}
+
+@layer utilities {
+  .shadow-100 {
+    box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.12), 0px 1px 2px rgba(0, 0, 0, 0.24);
+  }
+  .border-light-200 {
+    border-color: #e0e0e0;
+  }
+  .combo-box {
+    @apply !p-3.5 !border w-full !border-light-400 !rounded-xl !text-base !text-dark-400 !font-normal;
+  }
+  .button-class-secondary {
+    @apply !bg-white !px-4 !rounded-lg !flex !items-center !justify-center !gap-1.5 !shadow-sm;
+  }
+}

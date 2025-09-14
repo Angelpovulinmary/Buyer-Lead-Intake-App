@@ -34,7 +34,7 @@ export async function POST(request: Request) {
       if (!parsed.success) {
         errors.push({
           row: index + 2,
-          message: parsed.error.issues.map(issue=>issue.message).join(', '),
+          message: parsed.error.errors.map(e => e.message).join(', '),
         });
       } else {
         validRows.push(parsed.data);
@@ -63,5 +63,3 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: 'Failed to import CSV' }, { status: 500 });
   }
 }
-
-

@@ -1,5 +1,5 @@
 //import './globals.css';
-
+import "./styles/app.css";
 export default function RootLayout({
   children,
 }: {
@@ -8,10 +8,12 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        <header style={{ padding: '10px', borderBottom: '1px solid #ccc' }}>
-          <h2>Buyer Lead Intake App</h2>
+        <header style={{ borderBottom: "1px solid #ccc" }}>
+          <section>
+            <h2 className="">Buyer Lead Intake App</h2>
+          </section>
         </header>
-        <main style={{ padding: '20px' }}>{children}</main>
+        <main style={{ padding: "20px" }}>{children}</main>
       </body>
     </html>
   );

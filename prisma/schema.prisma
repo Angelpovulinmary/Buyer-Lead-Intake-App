@@ -68,11 +68,11 @@ enum PropertyType {
 }
 
 enum BHK {
-  "1"
-  "2"
-  "3"
-  "4"
-  Studio
+ ONE
+  TWO
+  THREE
+  FOUR
+  STUDIO
 }
 
 enum Purpose {
@@ -81,10 +81,10 @@ enum Purpose {
 }
 
 enum Timeline {
-  "0-3m"
-  "3-6m"
-  ">6m"
-  Exploring
+  ZERO_TO_THREE_M
+  THREE_TO_SIX_M
+  MORE_THAN_SIX_M
+  EXPLORING
 }
 
 enum Source {

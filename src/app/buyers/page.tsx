@@ -1,72 +1,239 @@
 // src/app/buyers/page.tsx
-import { useEffect, useState } from 'react';
-import { useSearchParams, useRouter } from 'next/navigation';
+"use client";
 
-interface Buyer {
-  id: string;
+// src/app/buyers/new/page.tsx or wherever this file is
+
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { ComboBoxComponent, ChangeEventArgs } from '@syncfusion/ej2-react-dropdowns';
+import { bhkLabels, timelineLabels, BHK, Timeline } from '@/lib/constants';
+
+// Create options from constants
+const bhkOptions = Object.entries(bhkLabels).map(([key, label]) => ({
+  text: label,
+  value: key as BHK,
+}));
+
+const timelineOptions = Object.entries(timelineLabels).map(([key, label]) => ({
+  text: label,
+  value: key as Timeline,
+}));
+
+// Define the FormData type
+type FormData = {
   fullName: string;
+  email: string;
   phone: string;
   city: string;
   propertyType: string;
-  budgetMin?: number;
-  budgetMax?: number;
-  timeline: string;
-  status: string;
-  updatedAt: string;
-}
+  bhk: BHK;
+  purpose: string;
+  budgetMin: string;
+  budgetMax: string;
+  timeline: Timeline;
+  source: string;
+  notes: string;
+  tags: string;
+};
 
-export default function BuyersPage() {
-  const searchParams = useSearchParams();
+export default function NewBuyerPage() {
   const router = useRouter();
-  const [buyers, setBuyers] = useState<Buyer[]>([]);
-  const [page, setPage] = useState(1);
 
-  useEffect(() => {
-    const params = new URLSearchParams(searchParams.toString());
-    params.set('page', page.toString());
-    fetch(`/api/buyers?${params.toString()}`)
-      .then(res => res.json())
-      .then(data => setBuyers(data.buyers))
-      .catch(err => console.error('Failed to load buyers', err));
-  }, [searchParams, page]);
+  const [formData, setFormData] = useState<FormData>({
+    fullName: '',
+    email: '',
+    phone: '',
+    city: 'Chandigarh',
+    propertyType: 'Apartment',
+    bhk: 'ONE',
+    purpose: 'Buy',
+    budgetMin: '',
+    budgetMax: '',
+    timeline: 'ZERO_TO_THREE_M',
+    source: 'Website',
+    notes: '',
+    tags: '',
+  });
+
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
+  ) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  const handleComboChange = (name: keyof FormData, value: any) => {
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    // Validate enum values before submitting
+    if (!Object.keys(bhkLabels).includes(formData.bhk)) {
+      alert("Please select a valid BHK");
+      return;
+    }
+    if (!Object.keys(timelineLabels).includes(formData.timeline)) {
+      alert("Please select a valid Timeline");
+      return;
+    }
+
+    try {
+      const payload = {
+        ...formData,
+        tags: formData.tags.split(',').map((tag) => tag.trim()),
+      };
+
+      const res = await fetch('/api/buyers/new', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+
+      if (res.ok) {
+        alert('Lead created!');
+        router.push('/buyers');
+      } else {
+        const data = await res.json();
+        alert('Error: ' + data.error);
+      }
+    } catch (error) {
+      console.error('Submission failed', error);
+    }
+  };
 
   return (
-    <div className="p-4">
-      <h1 className="text-2xl font-bold mb-4">Buyer Leads</h1>
-      <table className="table-auto border-collapse border border-gray-300 w-full">
-        <thead>
-          <tr>
-            <th className="border border-gray-300 p-2">Name</th>
-            <th className="border border-gray-300 p-2">Phone</th>
-            <th className="border border-gray-300 p-2">City</th>
-            <th className="border border-gray-300 p-2">Property Type</th>
-            <th className="border border-gray-300 p-2">Budget</th>
-            <th className="border border-gray-300 p-2">Timeline</th>
-            <th className="border border-gray-300 p-2">Status</th>
-            <th className="border border-gray-300 p-2">Updated At</th>
-          </tr>
-        </thead>
-        <tbody>
-          {buyers.map(buyer => (
-            <tr key={buyer.id}>
-              <td className="border border-gray-300 p-2">{buyer.fullName}</td>
-              <td className="border border-gray-300 p-2">{buyer.phone}</td>
-              <td className="border border-gray-300 p-2">{buyer.city}</td>
-              <td className="border border-gray-300 p-2">{buyer.propertyType}</td>
-              <td className="border border-gray-300 p-2">
-                {buyer.budgetMin ?? 'N/A'} - {buyer.budgetMax ?? 'N/A'}
-              </td>
-              <td className="border border-gray-300 p-2">{buyer.timeline}</td>
-              <td className="border border-gray-300 p-2">{buyer.status}</td>
-              <td className="border border-gray-300 p-2">{new Date(buyer.updatedAt).toLocaleString()}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-      <div className="mt-4 space-x-2">
-        <button onClick={() => setPage(p => Math.max(p - 1, 1))} className="px-4 py-2 bg-gray-200 rounded">Previous</button>
-        <button onClick={() => setPage(p => p + 1)} className="px-4 py-2 bg-gray-200 rounded">Next</button>
-      </div>
+    <div className="p-4 max-w-lg mx-auto">
+      <h1 className="text-2xl font-bold mb-4">New Lead</h1>
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <input
+          name="fullName"
+          value={formData.fullName}
+          onChange={handleChange}
+          placeholder="Full Name"
+          className="input"
+        />
+        <input
+          name="email"
+          value={formData.email}
+          onChange={handleChange}
+          placeholder="Email"
+          className="border p-2 w-full"
+        />
+        <input
+          name="phone"
+          value={formData.phone}
+          onChange={handleChange}
+          placeholder="Phone"
+          className="border p-2 w-full"
+        />
+
+        <select name="city" value={formData.city} onChange={handleChange} className="border p-2 w-full">
+          <option value="Chandigarh">Chandigarh</option>
+          <option value="Mohali">Mohali</option>
+          <option value="Zirakpur">Zirakpur</option>
+          <option value="Panchkula">Panchkula</option>
+          <option value="Other">Other</option>
+        </select>
+
+        <select
+          name="propertyType"
+          value={formData.propertyType}
+          onChange={handleChange}
+          className="border p-2 w-full"
+        >
+          <option value="Apartment">Apartment</option>
+          <option value="Villa">Villa</option>
+          <option value="Plot">Plot</option>
+          <option value="Office">Office</option>
+          <option value="Retail">Retail</option>
+        </select>
+
+        <ComboBoxComponent
+          placeholder="Select BHK"
+          dataSource={bhkOptions}
+          fields={{ text: 'text', value: 'value' }}
+          value={formData.bhk}
+          change={(e: ChangeEventArgs) => handleComboChange('bhk', e.value as BHK)}
+          className="border p-2 w-full"
+        />
+
+        <select
+          name="purpose"
+          value={formData.purpose}
+          onChange={handleChange}
+          className="border p-2 w-full"
+        >
+          <option value="Buy">Buy</option>
+          <option value="Rent">Rent</option>
+        </select>
+
+        <input
+          name="budgetMin"
+          value={formData.budgetMin}
+          onChange={handleChange}
+          placeholder="Budget Min"
+          type="number"
+          className="border p-2 w-full"
+        />
+        <input
+          name="budgetMax"
+          value={formData.budgetMax}
+          onChange={handleChange}
+          placeholder="Budget Max"
+          type="number"
+          className="border p-2 w-full"
+        />
+
+        <ComboBoxComponent
+          placeholder="Select Timeline"
+          dataSource={timelineOptions}
+          fields={{ text: 'text', value: 'value' }}
+          value={formData.timeline}
+          change={(e: ChangeEventArgs) => handleComboChange('timeline', e.value as Timeline)}
+          className="border p-2 w-full"
+        />
+
+        <select
+          name="source"
+          value={formData.source}
+          onChange={handleChange}
+          className="border p-2 w-full"
+        >
+          <option value="Website">Website</option>
+          <option value="Referral">Referral</option>
+          <option value="Walk-in">Walk-in</option>
+          <option value="Call">Call</option>
+          <option value="Other">Other</option>
+        </select>
+
+        <textarea
+          name="notes"
+          value={formData.notes}
+          onChange={handleChange}
+          placeholder="Notes"
+          className="border p-2 w-full"
+        />
+
+        <input
+          name="tags"
+          value={formData.tags}
+          onChange={handleChange}
+          placeholder="Tags (comma separated)"
+          className="border p-2 w-full"
+        />
+
+        <button type="submit" className="bg-blue-500 text-white p-2 rounded">
+          Save Lead
+        </button>
+      </form>
     </div>
   );
 }
