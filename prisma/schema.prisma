@@ -51,7 +51,7 @@ model BuyerHistory {
   @@index([buyerId])
 }
 
-enum City {
+export enum City {
   Chandigarh
   Mohali
   Zirakpur
@@ -59,7 +59,7 @@ enum City {
   Other
 }
 
-enum PropertyType {
+export enum PropertyType {
   Apartment
   Villa
   Plot
@@ -67,7 +67,7 @@ enum PropertyType {
   Retail
 }
 
-enum BHK {
+export enum BHK {
  ONE
   TWO
   THREE
@@ -75,19 +75,19 @@ enum BHK {
   STUDIO
 }
 
-enum Purpose {
+export enum Purpose {
   Buy
   Rent
 }
 
-enum Timeline {
+export enum Timeline {
   ZERO_TO_THREE_M
   THREE_TO_SIX_M
   MORE_THAN_SIX_M
   EXPLORING
 }
 
-enum Source {
+export enum Source {
   Website
   Referral
   Walkin
@@ -95,7 +95,7 @@ enum Source {
   Other
 }
 
-enum Status {
+export enum Status {
   New
   Qualified
   Contacted
