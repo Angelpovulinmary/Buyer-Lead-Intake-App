@@ -1,36 +1,62 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Buyer Lead Intake App
 
-## Getting Started
+A mini app built with Next.js and TypeScript to capture, manage, and track buyer leads efficiently. It includes validation, server-side rendering, search/filter functionalities, and CSV import/export with proper error handling.
 
-First, run the development server:
+## 🚀 Features
 
-```bash
+- Create new buyer leads with full validation (client + server)
+- List leads with pagination, filtering, sorting, and search
+- View and edit leads with concurrency control and change history
+- Import leads from CSV with row-level validation and transaction safety
+- Export filtered leads as CSV
+- Ownership enforcement: users can only edit/delete their own leads
+- Authentication using magic link or demo login
+- Accessibility-friendly forms and error handling
+
+## ✅ Tech Stack
+
+- **Framework:** Next.js (App Router) with TypeScript
+- **Database:** PostgreSQL / Supabase / SQLite using Prisma ORM with migrations
+- **Validation:** Zod for both server and client-side validation
+- **Authentication:** Simple magic link or demo login
+- **Styling:** Tailwind CSS (optional)
+- **Testing:** Unit tests for validation logic
+- **Error Handling:** Error boundaries, rate limiting, stale data handling
+
+## 📂 Data Model
+
+- `buyers`: Main table to store buyer leads
+- `buyer_history`: Tracks changes to leads, who changed them, and when
+
+## 📥 CSV Import Format
+
+The CSV must include these headers:
+
+Each row represents one lead with validated fields.
+
+## 📦 Setup Instructions
+
+1. Clone the repo:
+   ```bash
+   git clone https://github.com/yourusername/buyer-lead-intake.git
+   cd buyer-lead-intake
+2. Install dependencies:
+
+npm install
+
+3. Configure environment variables:
+
+DATABASE_URL=your_database_connection_string
+NEXT_PUBLIC_AUTH_SECRET=your_secret
+
+4. Run migrations:
+
+npx prisma migrate dev
+
+5. Start the development server:
+
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Visit http://localhost:3000 to use the app.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
